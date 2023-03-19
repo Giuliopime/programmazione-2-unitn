@@ -86,10 +86,6 @@ public class Map {
         }
     }
 
-    public void insert_rec(int x, int y, Block block) {
-
-    }
-
     /**
      * @return the total number of blocks in the map
      */
