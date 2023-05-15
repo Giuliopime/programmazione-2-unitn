@@ -1,65 +1,51 @@
 package data;
 
+import blocks.impl.AirBlock;
+import blocks.impl.WaterBlock;
+import blocks.interfaces.Block;
+import blocks.interfaces.SmeltableBlock;
+
 public class Map {
     private final Block[][] map;
-    private final int mapXSize;
-    private final int mapYSize;
-
 
     /**
      * Initializes the map to a 10x10 block map
      */
     public Map() {
-        mapXSize = 10;
-        mapYSize = 10;
-        map = new Block[mapXSize][mapYSize];
-    }
+        map = new Block[MapCoordinates.MAP_X_SIZE][MapCoordinates.MAP_X_SIZE];
 
-    /**
-     * Asserts that two coordinates are within the map bounds and the specified xLowerBound and yLowerBound params
-     * @param x the x coordinate to check
-     * @param y the y coordinate to check
-     * @param xLowerBound lowest value the x coordinate can have
-     * @param yLowerBound lowest value the y coordinate can have
-     */
-    private void check_coordinates_bounds(int x, int y, int xLowerBound, int yLowerBound) {
-        if (x >= mapXSize || y >= mapXSize || x < xLowerBound || y < yLowerBound) {
-            throw new IllegalArgumentException(
-                    "The X and Y coordinates are not within the bounds\n" +
-                            "X bounds are " + xLowerBound + " - " + mapXSize + "\n" +
-                            "Y bounds are " + yLowerBound + " - " + mapYSize
-            );
+        for (int i=0; i<MapCoordinates.MAP_X_SIZE; i++) {
+            for (int y=0; y<MapCoordinates.MAP_X_SIZE; y++) {
+                map[i][y] = new AirBlock();
+            }
         }
     }
 
-    /**
-     * Asserts that two coordinates are within the map bounds and 0 as the lower bound for both coordinates
-     * @param x the x coordinate to check
-     * @param y the y coordinate to check
-     */
-    private void check_coordinates_bounds(int x, int y) {
-        check_coordinates_bounds(x, y, 0, 0);
+    public void test() {
+        addRiver();
     }
 
     /**
      * Changes the block in the map via its coordinates
      * @param x x coordinate
      * @param y y coordinate
+     * @throws IllegalArgumentException if the coordinates are not within bounds
      */
-    public void change_cell(int x, int y) {
-        check_coordinates_bounds(x, y);
+    public void change_cell(int x, int y) throws IllegalArgumentException {
+        MapCoordinates.checkCoordinatesBounds(x, y);
 
-        map[x][y] = new Block('A');
+        map[x][y] = new AirBlock();
     }
 
     /**
      * Swaps a block with the block below it
-     * This will swap the blocks <b>only</b> if the block below is {@link Block#isFall_through()}
+     * This will swap the blocks <b>only</b> if the block below is {@link AirBlock#isFall_through()}
      * @param x the x coordinate of the block to swap
      * @param y the y coordinate of the block to swap
+     * @throws IllegalArgumentException if the coordinates are not within bounds
      */
-    private void swap(int x, int y) {
-        check_coordinates_bounds(x, y, 0 , 1);
+    private void swap(int x, int y) throws IllegalArgumentException {
+        MapCoordinates.checkCoordinatesBounds(x, y, 0 , 1);
 
         Block blockBelow = map[x][y-1];
         if (blockBelow.isFall_through()) {
@@ -73,13 +59,16 @@ public class Map {
 
     /**
      * Insert a block in the map via the coordinates
-     * Note that if the block {@link Block#isFalls_with_gravity()} then it will fall down when possible
+     * Note that if the block {@link AirBlock#isFalls_with_gravity()} then it will fall down when possible
      * @param x insert x coordinate
      * @param y insert y coordinate
      * @param block block to insert
+     * @throws IllegalArgumentException if the coordinates are not within bounds
      */
-    public void insert_at_cords(int x, int y, Block block) {
-        check_coordinates_bounds(x, y);
+    public void insertAtCords(int x, int y, Block block) throws IllegalArgumentException {
+        MapCoordinates.checkCoordinatesBounds(x, y);
+
+        map[x][y] = block;
 
         if (block.isFalls_with_gravity() && y != 0) {
             swap(x, y);
@@ -87,21 +76,57 @@ public class Map {
     }
 
     /**
-     * @return the total number of blocks in the map
-     */
-    public int getBlocksCount() {
-        return mapXSize * mapYSize;
-    }
-
-    /**
      * Shows all the blocks of the map
      */
-    public void display_on_out() {
-        for (int x=0; x<mapXSize; x++) {
-            for (int y=0; y<mapYSize; y++) {
+    public void displayOnOut() {
+        // This is reversed because we print to the console starting from the top instead of the bottom
+        for (int x=MapCoordinates.MAP_X_SIZE - 1; x>=0; x--) {
+            for (int y=0; y<MapCoordinates.MAP_Y_SIZE; y++) {
                 System.out.print("\t" + map[x][y].display());
             }
             System.out.println("\n");
         }
+    }
+
+    public void addSea() {
+        addColumnsOfWater(3);
+    }
+
+    public void addRiver() {
+        addColumnsOfWater(1);
+    }
+
+    /**
+     * Adds columns of water to the map, starts from the top row
+     * @param amount amount of columns of water to add
+     */
+
+    private void addColumnsOfWater(int amount) {
+        try {
+            for (int i=0; i<amount; i++) {
+                insertAtCords(i, MapCoordinates.MAP_Y_SIZE - 1, new WaterBlock());
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Retrieves the block at certain cords if it's a smeltable block
+     * @param x x coords
+     * @param y y coords
+     * @return the smeltable block
+     * @throws UnsupportedOperationException if the block at coords is not smeltable
+     * @throws IllegalArgumentException If the coordinates are not within bounds
+     */
+    public SmeltableBlock setupBlockOfCoordinatesForSmelting(int x, int y) throws UnsupportedOperationException, IllegalArgumentException {
+        MapCoordinates.checkCoordinatesBounds(x, y);
+
+        Block blockToSmelt = map[x][y];
+        if (!(blockToSmelt instanceof SmeltableBlock)) {
+            throw new UnsupportedOperationException("The block at coordinates x=" + x + " y=" + y + " is not smeltable");
+        }
+
+        return (SmeltableBlock) blockToSmelt;
     }
 }
