@@ -1,9 +1,15 @@
 package blocks.interfaces;
 
-public interface Block {
+public interface Block extends InventoryBlock {
     char display();
 
-    boolean isFalls_with_gravity();
+    boolean isFallsWithGravity();
 
-    boolean isFall_through();
+    boolean isFallThrough();
+
+    boolean isPickable();
+
+    boolean isDestroiesFallingBlocks();
+
+    boolean isDestroiableOnFall();
 }

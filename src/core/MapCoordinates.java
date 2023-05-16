@@ -1,4 +1,4 @@
-package data;
+package core;
 
 /**
  * Utility class for defining map coordinates

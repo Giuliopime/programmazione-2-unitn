@@ -6,7 +6,7 @@ import blocks.interfaces.SmeltableBlock;
 
 public class NullBlock extends AbstractSolidBlock implements SmeltableBlock {
     public NullBlock() {
-        super("null", '/');
+        super("null", '/', false, false);
     }
 
     @Override

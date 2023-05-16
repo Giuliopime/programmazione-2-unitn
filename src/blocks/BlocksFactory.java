@@ -1,6 +1,7 @@
 package blocks;
 
 import blocks.impl.*;
+import ui.Furnace;
 
 public class BlocksFactory {
     public AirBlock getAirBlock() {

@@ -8,7 +8,10 @@ public class AirBlock extends AbstractBlock {
                 "air",
                 '.',
                 false,
-                true
-        );
+                true,
+                false,
+                false,
+                false
+                );
     }
 }

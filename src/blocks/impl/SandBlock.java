@@ -7,7 +7,7 @@ import blocks.interfaces.SmeltableBlock;
 public class SandBlock extends AbstractBlock implements SmeltableBlock {
 
     public SandBlock() {
-        super("sand", '_', true, false);
+        super("sand", '_', true, false, true, false, true);
     }
 
     @Override

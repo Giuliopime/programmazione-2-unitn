@@ -4,6 +4,6 @@ import blocks.AbstractSolidBlock;
 
 class IronSwordBlock extends AbstractSolidBlock {
     public IronSwordBlock() {
-        super("iron-sword", 's');
+        super("iron-sword", 's', false , false);
     }
 }

@@ -6,7 +6,7 @@ import blocks.interfaces.SmeltableBlock;
 
 public class RawIronBlock extends AbstractSolidBlock implements SmeltableBlock {
     public RawIronBlock() {
-        super("raw-iron", 'i');
+        super("raw-iron", 'i', false, false);
     }
 
     @Override

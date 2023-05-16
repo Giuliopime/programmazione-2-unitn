@@ -1,5 +1,6 @@
-package blocks.impl;
+package ui;
 
+import blocks.impl.NullBlock;
 import blocks.interfaces.Block;
 import blocks.interfaces.SmeltableBlock;
 
@@ -15,12 +16,27 @@ public class Furnace {
         output = new NullBlock();
     }
 
+    public SmeltableBlock removeInput() throws UnsupportedOperationException {
+        if (input instanceof NullBlock) {
+            throw new UnsupportedOperationException("The input is empty!");
+        }
+
+        SmeltableBlock input = this.input;
+        this.input = new NullBlock();
+        return input;
+    }
+
     /**
      * Sets the furnace input smeltable block
      * Call {@link #smelt()} to smelt the input block and get the smelted block as the output
      * @param input smeltable block
+     * @throws UnsupportedOperationException if the furnace input is already full
      */
-    public void setInput(SmeltableBlock input) {
+    public void setInput(SmeltableBlock input) throws UnsupportedOperationException {
+        if (!(this.input instanceof NullBlock)) {
+            throw new UnsupportedOperationException("The furnace is not empty!");
+        }
+
         this.input = input;
     }
 
